@@ -14,8 +14,10 @@ can roll a quality, from vanilla, DLCs or mods) and toggle **Rebuild until...**:
 
 From then on the mod runs the loop: every finished result below the target quality is
 deconstructed and a fresh blueprint appears on the same spot with the same material,
-style and rotation. As soon as the target quality (or better) is rolled, the toggle
-switches itself off and you get a success message.
+style and rotation. The in-progress blueprint or frame gets a **Stop rebuilding**
+button showing the target quality, builder and attempt count. As soon as the target
+quality (or better) is rolled, the toggle switches itself off and you get a success
+message.
 
 With a specific pawn chosen, only that pawn can do the construction - other colonists
 leave the blueprint alone, both with automatic work and right-click orders. By default

@@ -75,7 +75,14 @@ The mod never fights the player. It stops by itself (with a message) when:
 
 ## Settings
 
-In the mod options (developer mode only):
+In the mod options:
+
+- **Helpers haul materials** (on by default) - when a specific builder is chosen,
+  other colonists may still deliver materials to the restricted blueprint, filling it
+  faster. The chosen builder always does all the actual construction and rolls every
+  quality.
+
+In developer mode, additionally:
 
 - **Debug logging** - every step of every rebuild loop: activation, destruction with its
   mode, blueprint placement with def/stuff/rotation, quality rolls, completion.
@@ -107,11 +114,13 @@ The project reads the game path from the `RimWorldDir` property (default
 Harmony patches, each wrapped so one failure never breaks the others:
 
 - `Thing.Destroy` (prefix) - tracks destruction of tracked blueprints/frames/buildings;
-- `ThingWithComps.GetGizmos` (postfix) - adds the toggle to quality-capable buildings;
+- `ThingWithComps.GetGizmos` (postfix) - adds the toggle to quality-capable buildings
+  and the stop button to their in-progress blueprints/frames;
 - `WorkGiver_ConstructDeliverResourcesToBlueprints.HasJobOnThing/JobOnThing`,
   `WorkGiver_ConstructDeliverResourcesToFrames.HasJobOnThing/JobOnThing`,
-  `WorkGiver_ConstructFinishFrames.JobOnThing` (postfixes) - enforce the single-builder
-  restriction.
+  `WorkGiver_ConstructFinishFrames.JobOnThing` and `GenConstruct.CanConstruct`
+  (postfixes) - enforce the single-builder restriction, with material delivery exempted
+  per the mod option.
 
 Nothing is hardcoded: quality categories come from `QualityUtility.AllQualityCategories`,
 builder candidates are computed from whatever pawns the game currently has, and buildings
