@@ -41,6 +41,7 @@ namespace RebuildUntilLegendary
             PatchSafe(harmony, typeof(Patch_SupplyFrames_HasJobOnThing));
             PatchSafe(harmony, typeof(Patch_SupplyFrames_JobOnThing));
             PatchSafe(harmony, typeof(Patch_FinishFrames_JobOnThing));
+            PatchSafe(harmony, typeof(Patch_GenConstruct_CanConstruct));
             Log.Message("[RebuildUntilLegendary] v" + Version + " loaded (debugLogging="
                 + Settings.debugLogging.ToString().ToLowerInvariant() + ").");
         }

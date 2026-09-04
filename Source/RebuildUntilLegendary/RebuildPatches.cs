@@ -121,13 +121,35 @@ namespace RebuildUntilLegendary
         }
     }
 
+    /// <summary>
+    /// Deepest gate: every vanilla construction workgiver validates a pawn through
+    /// GenConstruct.CanConstruct right before issuing a job (the WorkTypeDef overload
+    /// delegates to this one), and combined haul jobs resolve nearby needers through
+    /// it too. Blocking here covers all of those paths in one place, including the
+    /// ones the workgiver postfixes above cannot see.
+    /// </summary>
+    [HarmonyPatch(typeof(GenConstruct), nameof(GenConstruct.CanConstruct), new[]
+    {
+        typeof(Thing), typeof(Pawn), typeof(bool), typeof(bool), typeof(JobDef)
+    })]
+    public static class Patch_GenConstruct_CanConstruct
+    {
+        public static void Postfix(Pawn p, Thing t, ref bool __result)
+        {
+            if (__result && BuilderRestriction.Blocks(p, t))
+            {
+                __result = false;
+            }
+        }
+    }
+
     /// <summary>Static helper behind the workgiver patches: checks whether the thing
     /// belongs to a rebuild job that reserves construction for one specific pawn.</summary>
     internal static class BuilderRestriction
     {
         public static bool Blocks(Pawn pawn, Thing t)
         {
-            if (pawn == null || t == null)
+            if (pawn == null || t == null || t.Spawned == false)
             {
                 return false;
             }

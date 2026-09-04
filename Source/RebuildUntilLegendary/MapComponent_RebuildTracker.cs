@@ -406,7 +406,10 @@ namespace RebuildUntilLegendary
             DebugLog.Log("placed blueprint " + (blueprint != null ? blueprint.ThingID : "???")
                 + " for " + job.DescribeBuilding() + " at " + job.DescribeCell()
                 + ", rotation " + job.rotation + ", target " + job.targetQuality
-                + ", builder " + job.DescribeBuilder() + ".");
+                + ", builder " + job.DescribeBuilder()
+                + (job.builder != null && blueprint != null && job.Matches(blueprint)
+                    ? " (restriction active)."
+                    : " (NO builder restriction)."));
         }
 
         /// <summary>True when a finished building of a different def occupies the
