@@ -3,6 +3,9 @@
 
   <RebuildUntilLegendary.SettingsCategory>Rebuild Until LEGENDARY</RebuildUntilLegendary.SettingsCategory>
 
+  <RebuildUntilLegendary.AnyoneHauls>Helpers haul materials</RebuildUntilLegendary.AnyoneHauls>
+  <RebuildUntilLegendary.AnyoneHaulsTip>When a specific builder is chosen, other colonists may still deliver materials to the restricted blueprint, filling it faster. The chosen builder always does all the actual construction work and rolls every quality.</RebuildUntilLegendary.AnyoneHaulsTip>
+
   <RebuildUntilLegendary.GizmoLabel>Rebuild until...</RebuildUntilLegendary.GizmoLabel>
   <RebuildUntilLegendary.GizmoDesc>Keep rebuilding this building until it reaches the chosen quality.
 

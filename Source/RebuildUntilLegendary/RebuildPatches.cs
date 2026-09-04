@@ -70,17 +70,18 @@ namespace RebuildUntilLegendary
     }
 
     /// <summary>
-    /// Keeps everyone but the chosen builder away from a restricted blueprint or
-    /// frame. Both automatic work assignment and right-click orders go through these
-    /// workgivers, so covering their scans covers every way a pawn could start
-    /// working on the rebuild.
+    /// Keeps everyone but the chosen builder away from construction work on a
+    /// restricted blueprint or frame. Both automatic work assignment and right-click
+    /// orders go through these workgivers, and GenConstruct.CanConstruct is the last
+    /// gate they all share, so covering those covers every way a pawn could start
+    /// working on the rebuild. Material delivery can be exempted by mod setting.
     /// </summary>
     [HarmonyPatch(typeof(WorkGiver_ConstructDeliverResourcesToBlueprints), nameof(WorkGiver_ConstructDeliverResourcesToBlueprints.HasJobOnThing))]
     public static class Patch_SupplyBlueprints_HasJobOnThing
     {
         public static void Postfix(Pawn pawn, Thing t, ref bool __result)
         {
-            if (__result && BuilderRestriction.Blocks(pawn, t))
+            if (__result && BuilderRestriction.Blocks(pawn, t, deliveryWork: true))
             {
                 __result = false;
             }
@@ -92,7 +93,7 @@ namespace RebuildUntilLegendary
     {
         public static void Postfix(Pawn pawn, Thing t, ref Job __result)
         {
-            if (__result != null && BuilderRestriction.Blocks(pawn, t))
+            if (__result != null && BuilderRestriction.Blocks(pawn, t, deliveryWork: true))
             {
                 __result = null;
             }
@@ -104,7 +105,7 @@ namespace RebuildUntilLegendary
     {
         public static void Postfix(Pawn pawn, Thing t, ref bool __result)
         {
-            if (__result && BuilderRestriction.Blocks(pawn, t))
+            if (__result && BuilderRestriction.Blocks(pawn, t, deliveryWork: true))
             {
                 __result = false;
             }
@@ -116,7 +117,7 @@ namespace RebuildUntilLegendary
     {
         public static void Postfix(Pawn pawn, Thing t, ref Job __result)
         {
-            if (__result != null && BuilderRestriction.Blocks(pawn, t))
+            if (__result != null && BuilderRestriction.Blocks(pawn, t, deliveryWork: true))
             {
                 __result = null;
             }
@@ -128,7 +129,7 @@ namespace RebuildUntilLegendary
     {
         public static void Postfix(Pawn pawn, Thing t, ref Job __result)
         {
-            if (__result != null && BuilderRestriction.Blocks(pawn, t))
+            if (__result != null && BuilderRestriction.Blocks(pawn, t, deliveryWork: false))
             {
                 __result = null;
             }
@@ -148,9 +149,12 @@ namespace RebuildUntilLegendary
     })]
     public static class Patch_GenConstruct_CanConstruct
     {
-        public static void Postfix(Pawn p, Thing t, ref bool __result)
+        public static void Postfix(Pawn p, Thing t, JobDef jobForReservation, ref bool __result)
         {
-            if (__result && BuilderRestriction.Blocks(p, t))
+            // Delivery calls carry the HaulToContainer reservation tag, construction
+            // calls do not - that is what tells helper hauling apart from building.
+            bool deliveryWork = jobForReservation == JobDefOf.HaulToContainer;
+            if (__result && BuilderRestriction.Blocks(p, t, deliveryWork))
             {
                 __result = false;
             }
@@ -158,12 +162,14 @@ namespace RebuildUntilLegendary
     }
 
     /// <summary>Static helper behind the workgiver patches: checks whether the thing
-    /// belongs to a rebuild job that reserves construction for one specific pawn.</summary>
+    /// belongs to a rebuild job that reserves construction for one specific pawn.
+    /// Material delivery can be opened to everyone by mod setting (on by default),
+    /// while the actual construction stays exclusive to the chosen builder.</summary>
     internal static class BuilderRestriction
     {
-        public static bool Blocks(Pawn pawn, Thing t)
+        public static bool Blocks(Pawn pawn, Thing t, bool deliveryWork)
         {
-            if (pawn == null || t == null || t.Spawned == false)
+            if (pawn == null || t == null || !t.Spawned)
             {
                 return false;
             }
@@ -172,6 +178,10 @@ namespace RebuildUntilLegendary
                 return false;
             }
             if (job.builder == pawn)
+            {
+                return false;
+            }
+            if (deliveryWork && (RebuildUntilLegendaryMod.Settings?.anyoneHauls ?? true))
             {
                 return false;
             }

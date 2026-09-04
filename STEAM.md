@@ -17,9 +17,11 @@ deconstructed and a fresh blueprint appears on the same spot with the same mater
 style and rotation. As soon as the target quality (or better) is rolled, the toggle
 switches itself off and you get a success message.
 
-With a specific pawn chosen, only that pawn can haul materials to and build the
-blueprint - other colonists leave it alone, both with automatic work and right-click
-orders. If the chosen pawn dies, the restriction is lifted so the job can finish.
+With a specific pawn chosen, only that pawn can do the construction - other colonists
+leave the blueprint alone, both with automatic work and right-click orders. By default
+other colonists may still help deliver materials to fill the blueprint faster (a mod
+option can turn helper hauling off). If the chosen pawn dies, the restriction is lifted
+so the job can finish.
 
 The rebuild survives saving and loading, and the mod never fights the player: canceling
 the blueprint, deconstructing or replacing the building, or moving it away stops the

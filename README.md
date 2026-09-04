@@ -48,10 +48,14 @@ where you want it.
 
 ## Builder restriction
 
-With a specific pawn chosen, nobody else can work on that rebuild: hauling materials to
-the blueprint, building the frame and finishing it are all limited to the chosen pawn -
-both automatic work assignment and right-click orders. The restriction is lifted
-automatically if the pawn dies, so the job can still be finished by anyone.
+With a specific pawn chosen, nobody else can do construction work on that rebuild:
+building the frame and finishing it are limited to the chosen pawn - both automatic
+work assignment and right-click orders. The restriction is lifted automatically if the
+pawn dies, so the job can still be finished by anyone.
+
+A mod option (**Helpers haul materials**, on by default) lets other colonists deliver
+materials to the restricted blueprint so it fills faster; the chosen builder still does
+all the actual construction and rolls every quality.
 
 Quality still matters: if the chosen pawn cannot build the thing (skills, ideology,
 backstory), vanilla rules apply and the loop simply waits.
@@ -83,12 +87,11 @@ In the mod options (developer mode only):
 - Each attempt costs materials like a normal deconstruct-rebuild cycle would.
 - Ideology-specific styles are carried over, but a rebuilt storage building leaves its
   storage group and rejoins with the same filter settings applied.
-- Vanilla groups nearby blueprints into one hauling job, so another pawn may still
-  deliver materials to a restricted blueprint that sits next to one they are already
-  supplying. All construction work itself stays exclusive to the chosen builder.
 - Switching the toggle off stops the loop immediately; a blueprint that was already
   placed stays on the map as a normal blueprint (cancel it with the cancel designator
   if unwanted).
+- With **Helpers haul materials** disabled, only the chosen pawn delivers materials
+  too, which can make each attempt slow on big builds.
 
 ## For developers
 
