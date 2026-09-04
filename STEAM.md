@@ -18,7 +18,7 @@ Keep rebuilding a building until it reaches the quality you want - and stop by i
 
 [b]Single-builder training[/b]
 [list][*]With a specific pawn chosen, only that pawn does the construction - both automatic work assignment and right-click orders. By default other colonists may still deliver materials to fill the blueprint faster (a mod option turns helper hauling off).
-[*]Every attempt is a full vanilla construction job, so the chosen builder earns experience each time - and as their skill rises, quality rolls improve and the loop converges on masterwork and legendary by itself. Point it at wooden stools to train a rookie, or at a grand sculpture to grind it out.
+[*]Every attempt is a full vanilla construction job, so the chosen builder earns experience each time - and as their skill rises, quality rolls improve and the loop converges on masterwork and legendary by itself. Point it at wooden stools to train a rookie, or at a grand throne to grind it out.
 [*]If the chosen pawn dies or otherwise leaves the colony, the restriction is lifted so the job can always finish.[/list]
 
 [h3]Settings[/h3]
