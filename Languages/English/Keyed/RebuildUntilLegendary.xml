@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <RebuildUntilLegendary.SettingsCategory>Rebuild Until LEGENDARY</RebuildUntilLegendary.SettingsCategory>
+
+  <RebuildUntilLegendary.GizmoLabel>Rebuild until...</RebuildUntilLegendary.GizmoLabel>
+  <RebuildUntilLegendary.GizmoDesc>Keep rebuilding this building until it reaches the chosen quality.
+
+A finished building below the target quality is automatically deconstructed and a fresh blueprint is placed on the same spot, with the same material, style and rotation. The toggle switches itself off as soon as the target quality (or better) is built.
+
+{0}</RebuildUntilLegendary.GizmoDesc>
+  <RebuildUntilLegendary.StateOff>Off. Click to pick a target quality and builder.</RebuildUntilLegendary.StateOff>
+  <RebuildUntilLegendary.StateOn>Target quality: {0} or better\nBuilder: {1}\nAttempts so far: {2}</RebuildUntilLegendary.StateOn>
+
+  <RebuildUntilLegendary.UntilQuality>Until {0} or better</RebuildUntilLegendary.UntilQuality>
+  <RebuildUntilLegendary.Anyone>Anyone (default)</RebuildUntilLegendary.Anyone>
+
+  <RebuildUntilLegendary.Activated>Will rebuild {0} until {1} or better. Builder: {2}.</RebuildUntilLegendary.Activated>
+  <RebuildUntilLegendary.Success>{0} reached {1} quality! Rebuilding finished.</RebuildUntilLegendary.Success>
+  <RebuildUntilLegendary.AlreadyGoodEnough>{0} is already {1} or better.</RebuildUntilLegendary.AlreadyGoodEnough>
+  <RebuildUntilLegendary.StoppedCanceled>Rebuilding of {0} stopped: canceled.</RebuildUntilLegendary.StoppedCanceled>
+  <RebuildUntilLegendary.StoppedOccupied>Rebuilding of {0} stopped: the spot is taken by something else.</RebuildUntilLegendary.StoppedOccupied>
+  <RebuildUntilLegendary.StoppedMoved>Rebuilding of {0} stopped: the building was moved away.</RebuildUntilLegendary.StoppedMoved>
+  <RebuildUntilLegendary.StoppedGone>Rebuilding of {0} stopped: the building is gone.</RebuildUntilLegendary.StoppedGone>
+  <RebuildUntilLegendary.StoppedNotDeconstructable>Rebuilding of {0} stopped: it cannot be deconstructed.</RebuildUntilLegendary.StoppedNotDeconstructable>
+  <RebuildUntilLegendary.BuilderGone>{0}: the chosen builder is no longer available, so anyone may finish the rebuild.</RebuildUntilLegendary.BuilderGone>
+
+  <RebuildUntilLegendary.DebugLogging>Debug logging</RebuildUntilLegendary.DebugLogging>
+  <RebuildUntilLegendary.DebugLoggingTip>Write every step of each rebuild loop to the log (activation, destruction, blueprint placement, quality rolls, completion). Only shown in developer mode.</RebuildUntilLegendary.DebugLoggingTip>
+  <RebuildUntilLegendary.VerboseLogging>Verbose logging (spammy)</RebuildUntilLegendary.VerboseLogging>
+  <RebuildUntilLegendary.VerboseLoggingTip>Additionally log high-frequency events such as every denied build attempt and every retry. Only useful for troubleshooting.</RebuildUntilLegendary.VerboseLoggingTip>
+
+</LanguageData>

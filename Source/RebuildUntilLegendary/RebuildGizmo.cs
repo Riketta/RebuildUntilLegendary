@@ -1,0 +1,123 @@
+using System.Collections.Generic;
+using RimWorld;
+using UnityEngine;
+using Verse;
+
+namespace RebuildUntilLegendary
+{
+    /// <summary>
+    /// The toggle gizmo shown on quality-capable player buildings. Switching it on
+    /// opens the two pickers (target quality, then builder), switching it off simply
+    /// removes the rebuild job. With several buildings selected, one click applies
+    /// to all of them; the pickers open only once per click.
+    /// </summary>
+    internal static class RebuildGizmo
+    {
+        private static int lastBatchFrame = -1;
+
+        /// <summary>Must match the gizmo patch condition: anything that can be
+        /// rebuilt through a blueprint and has a quality to chase.</summary>
+        public static bool Qualifies(Building building)
+        {
+            return building != null && building.Spawned
+                && building.Faction == Faction.OfPlayer
+                && building.def.blueprintDef != null
+                && building.def.IsResearchFinished
+                && building.GetComp<CompQuality>() != null;
+        }
+
+        public static Command_Toggle For(Building building)
+        {
+            MapComponent_RebuildTracker tracker = MapComponent_RebuildTracker.GetFor(building.Map);
+            if (tracker == null)
+            {
+                return null;
+            }
+            RebuildJob job = tracker.FindJob(building);
+            return new Command_Toggle
+            {
+                icon = TexButton.AutoRebuild,
+                defaultLabel = "RebuildUntilLegendary.GizmoLabel".Translate(),
+                defaultDesc = Describe(job),
+                isActive = delegate
+                {
+                    return tracker.FindJob(building) != null;
+                },
+                toggleAction = delegate
+                {
+                    ProcessClick(building, tracker.FindJob(building) != null);
+                }
+            };
+        }
+
+        private static string Describe(RebuildJob job)
+        {
+            string state = job == null
+                ? "RebuildUntilLegendary.StateOff".Translate().ToString()
+                : "RebuildUntilLegendary.StateOn".Translate(
+                    job.DescribeTarget(), job.DescribeBuilder(), job.attempts).ToString();
+            return "RebuildUntilLegendary.GizmoDesc".Translate(state).ToString();
+        }
+
+        private static void ProcessClick(Building clicked, bool wasActive)
+        {
+            if (Time.frameCount == lastBatchFrame)
+            {
+                // The gizmo grid dispatches one click to every matching gizmo of the
+                // selection; the batch collected below already covers them all.
+                return;
+            }
+            lastBatchFrame = Time.frameCount;
+            MapComponent_RebuildTracker tracker = MapComponent_RebuildTracker.GetFor(clicked.Map);
+            if (tracker == null)
+            {
+                return;
+            }
+            List<Building> batch = CollectBatch(clicked, wasActive);
+            if (batch.Count == 0)
+            {
+                return;
+            }
+            if (wasActive)
+            {
+                for (int i = 0; i < batch.Count; i++)
+                {
+                    RebuildJob job = tracker.FindJob(batch[i]);
+                    if (job != null)
+                    {
+                        tracker.Unregister(job, "manually switched off");
+                    }
+                }
+                return;
+            }
+            RebuildSelectorMenus.OpenQualityMenu(delegate (QualityCategory target)
+            {
+                RebuildSelectorMenus.OpenBuilderMenu(clicked.Map, delegate (Pawn builder)
+                {
+                    for (int i = 0; i < batch.Count; i++)
+                    {
+                        tracker.Register(batch[i], target, builder);
+                    }
+                });
+            });
+        }
+
+        private static List<Building> CollectBatch(Building clicked, bool wasActive)
+        {
+            List<Building> batch = new List<Building>();
+            foreach (object selected in Find.Selector.SelectedObjects)
+            {
+                if (selected is Building building && Qualifies(building) && building.Map == clicked.Map)
+                {
+                    MapComponent_RebuildTracker tracker = MapComponent_RebuildTracker.GetFor(building.Map);
+                    bool active = tracker != null && tracker.FindJob(building) != null;
+                    if (active == wasActive)
+                    {
+                        batch.Add(building);
+                    }
+                }
+            }
+            return batch;
+        }
+    }
+}

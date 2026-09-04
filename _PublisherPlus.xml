@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+  <Title>Rebuild Until LEGENDARY</Title>
+  <Excluded>
+    <exclude>.git</exclude>
+    <exclude>Source</exclude>
+    <exclude>STEAM.md</exclude>
+  </Excluded>
+</Configuration>
