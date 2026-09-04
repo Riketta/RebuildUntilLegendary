@@ -51,7 +51,8 @@ where you want it.
 With a specific pawn chosen, nobody else can do construction work on that rebuild:
 building the frame and finishing it are limited to the chosen pawn - both automatic
 work assignment and right-click orders. The restriction is lifted automatically if the
-pawn dies, so the job can still be finished by anyone.
+pawn dies or otherwise leaves the colony (discarded, taken away by a caravan), so the
+job can still be finished by anyone.
 
 A mod option (**Helpers haul materials**, on by default) lets other colonists deliver
 materials to the restricted blueprint so it fills faster; the chosen builder still does
