@@ -22,7 +22,7 @@ blueprint - other colonists leave it alone, both with automatic work and right-c
 orders. If the chosen pawn dies, the restriction is lifted so the job can finish.
 
 The rebuild survives saving and loading, and the mod never fights the player: canceling
-the blueprint, replacing the building with something else, or moving it away stops the
+the blueprint, deconstructing or replacing the building, or moving it away stops the
 loop cleanly with a message.
 
 ## Train builders, grind quality

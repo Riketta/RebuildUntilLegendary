@@ -57,12 +57,13 @@ backstory), vanilla rules apply and the loop simply waits.
 The mod never fights the player. It stops by itself (with a message) when:
 
 - the blueprint or frame is canceled;
+- the building is deconstructed by the player (only the mod's own below-target
+  re-rolls keep the loop going);
+- the building is replaced with a new blueprint - upgrades and Replace Stuff-style
+  material swaps end the loop instead of claiming the replacement;
 - the spot is taken over by a different building;
 - the building is minified or otherwise moved away;
 - the building disappears without a trace.
-
-Replacing the building with a new blueprint (upgrades, Replace Stuff-style mods) is not
-fought either - the loop simply ends there.
 
 ## Settings
 

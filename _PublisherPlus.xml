@@ -3,6 +3,7 @@
   <Title>Rebuild Until LEGENDARY</Title>
   <Excluded>
     <exclude>.git</exclude>
+    <exclude>.gitignore</exclude>
     <exclude>Source</exclude>
     <exclude>STEAM.md</exclude>
   </Excluded>

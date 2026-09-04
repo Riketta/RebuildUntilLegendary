@@ -36,10 +36,22 @@ namespace RebuildUntilLegendary
         public int retryAtTick;
 
         /// <summary>Thing id of the current blueprint/frame/building, used to notice
-        /// when the building was minified or otherwise moved away.</summary>
+        /// when the building was minified or otherwise moved away, and to tell a
+        /// legitimate successor apart from a same-def blueprint the player placed.</summary>
         public int occupantIdNumber = -1;
 
         public StorageSettings storageSettings;
+
+        /// <summary>Set right before the mod itself destroys a below-target building,
+        /// so the destroy handler can tell its own deconstruction from a player's.
+        /// Consumed synchronously by the Thing.Destroy prefix, never persisted.</summary>
+        public bool modInitiatedDeconstruct;
+
+        /// <summary>Tick until which a new occupant at the cell is trusted as the
+        /// successor of a tracked thing (blueprint - frame - building handover, or a
+        /// blueprint vanilla re-placed after failed construction or destruction).
+        /// Transient; successors appear within the same tick as the destroy.</summary>
+        public int expectSuccessorUntilTick;
 
         private int missingSinceTick = -1;
 

@@ -17,6 +17,12 @@ namespace RebuildUntilLegendary
 
         private const int RetryIntervalTicks = 250;
 
+        /// <summary>How long a same-def occupant at the cell counts as the successor
+        /// of a tracked blueprint/frame. Every vanilla handover (frame spawn, frame
+        /// completion, vanilla re-placed blueprint) happens within the same tick as
+        /// the preceding destroy, so a small window is enough.</summary>
+        private const int SuccessorGraceTicks = 60;
+
         public List<RebuildJob> Jobs = new List<RebuildJob>();
 
         /// <summary>Components of all live maps. Kept tiny by design: the workgiver
@@ -146,7 +152,9 @@ namespace RebuildUntilLegendary
         }
 
         /// <summary>Called from the Thing.Destroy prefix, while the thing still has a
-        /// map. Covers every way a tracked blueprint, frame or building can vanish.</summary>
+        /// map. Covers every way a tracked blueprint, frame or building can vanish.
+        /// Deconstruction and replacement by the player end the loop; the mod's own
+        /// below-target re-roll and ordinary destructions keep it going.</summary>
         public void NotifyDestroying(Thing t, DestroyMode mode)
         {
             RebuildJob job = FindJobForThing(t);
@@ -154,33 +162,65 @@ namespace RebuildUntilLegendary
             {
                 return;
             }
+            int now = Find.TickManager.TicksGame;
             switch (mode)
             {
                 case DestroyMode.Cancel:
-                    Unregister(job, "the blueprint was canceled");
+                    Unregister(job, "canceled by the player");
                     Messages.Message("RebuildUntilLegendary.StoppedCanceled".Translate(job.DescribeBuilding()),
                         MessageTypeDefOf.NeutralEvent);
                     return;
-                case DestroyMode.Vanish when t is Blueprint || t is Frame:
-                    // Normal lifecycle handover: blueprint becomes frame, frame becomes
-                    // the finished building. The new occupant is picked up by the tick.
-                    DebugLog.VerboseLog(job.DescribeBuilding() + " at " + job.DescribeCell()
-                        + " advanced to the next construction stage.");
-                    return;
-                case DestroyMode.FailConstruction when t is Frame:
-                    // Vanilla places a replacement blueprint itself; nothing to do.
-                    DebugLog.Log("construction of " + job.DescribeBuilding() + " at " + job.DescribeCell() + " failed; vanilla re-placed the blueprint.");
-                    return;
                 case DestroyMode.WillReplace:
-                    // The player is replacing this building with another blueprint.
-                    DebugLog.Log(job.DescribeBuilding() + " at " + job.DescribeCell() + " is being replaced by a new blueprint.");
+                    // The player is replacing this building with another blueprint
+                    // (upgrades, Replace Stuff-style swaps) - the loop must not claim
+                    // the replacement.
+                    Unregister(job, "the building is being replaced by a new blueprint");
+                    Messages.Message("RebuildUntilLegendary.StoppedReplaced".Translate(job.DescribeBuilding()),
+                        MessageTypeDefOf.NeutralEvent);
                     return;
-                default:
+                case DestroyMode.Deconstruct when t is Building && job.modInitiatedDeconstruct:
+                    // Our own below-target re-roll: continue the loop with a fresh
+                    // blueprint on the same spot.
+                    job.modInitiatedDeconstruct = false;
                     job.pendingPlacement = true;
                     job.retryAtTick = 0;
                     if (t is Building_Storage storage)
                     {
                         job.CaptureStorageSettings(storage.GetStoreSettings());
+                    }
+                    DebugLog.Log(job.DescribeBuilding() + " at " + job.DescribeCell()
+                        + " deconstructed for another attempt - will place a new blueprint.");
+                    return;
+                case DestroyMode.Deconstruct:
+                    // A player or another mod deconstructed the tracked building;
+                    // respect that and stop instead of re-placing a blueprint.
+                    Unregister(job, "the building was deconstructed");
+                    Messages.Message("RebuildUntilLegendary.StoppedDeconstructed".Translate(job.DescribeBuilding()),
+                        MessageTypeDefOf.NeutralEvent);
+                    return;
+                case DestroyMode.Vanish when t is Blueprint || t is Frame:
+                    // Normal lifecycle handover: blueprint becomes frame, frame becomes
+                    // the finished building. The successor appears this same tick.
+                    job.expectSuccessorUntilTick = now + SuccessorGraceTicks;
+                    DebugLog.VerboseLog(job.DescribeBuilding() + " at " + job.DescribeCell()
+                        + " advanced to the next construction stage.");
+                    return;
+                case DestroyMode.FailConstruction when t is Frame:
+                    // Vanilla places a replacement blueprint itself; adopt it.
+                    job.expectSuccessorUntilTick = now + SuccessorGraceTicks;
+                    DebugLog.Log("construction of " + job.DescribeBuilding() + " at " + job.DescribeCell()
+                        + " failed; vanilla re-placed the blueprint.");
+                    return;
+                default:
+                    // Destroyed by damage, quest, teleport, ... Keep rebuilding; the
+                    // successor window also adopts vanilla's auto-rebuild blueprint
+                    // when that option is enabled.
+                    job.pendingPlacement = true;
+                    job.retryAtTick = 0;
+                    job.expectSuccessorUntilTick = now + SuccessorGraceTicks;
+                    if (t is Building_Storage storage2)
+                    {
+                        job.CaptureStorageSettings(storage2.GetStoreSettings());
                     }
                     DebugLog.Log(job.DescribeBuilding() + " at " + job.DescribeCell() + " destroyed (" + mode
                         + ") - will place a new blueprint.");
@@ -204,7 +244,22 @@ namespace RebuildUntilLegendary
                 {
                     job.NotifyOccupantSeen();
                     job.pendingPlacement = false;
-                    job.occupantIdNumber = occupant.thingIDNumber;
+                    if (occupant.thingIDNumber != job.occupantIdNumber)
+                    {
+                        if (now > job.expectSuccessorUntilTick)
+                        {
+                            // A same-def thing appeared at the cell that we neither
+                            // placed nor inherited through a handover: the player is
+                            // replacing the building, so the loop must not claim it.
+                            Unregister(job, "a new same-def blueprint/building was placed by the player");
+                            Messages.Message("RebuildUntilLegendary.StoppedReplaced".Translate(job.DescribeBuilding()),
+                                MessageTypeDefOf.NeutralEvent);
+                            continue;
+                        }
+                        job.occupantIdNumber = occupant.thingIDNumber;
+                        DebugLog.VerboseLog("adopted successor " + occupant.ThingID + " for "
+                            + job.DescribeBuilding() + " at " + job.DescribeCell() + ".");
+                    }
                     if (occupant is Building building)
                     {
                         EvaluateFinishedBuilding(job, building);
@@ -287,11 +342,13 @@ namespace RebuildUntilLegendary
             job.attempts++;
             DebugLog.Log("quality " + quality + " below " + job.targetQuality + " - deconstructing "
                 + job.DescribeBuilding() + " at " + job.DescribeCell() + " (attempt " + job.attempts + ").");
+            job.modInitiatedDeconstruct = true;
             building.Destroy(DestroyMode.Deconstruct);
             if (!building.Destroyed)
             {
                 // Destroy was refused (e.g. a non-destroyable def, or another mod
                 // blocked it). Stop instead of hammering the same call every check.
+                job.modInitiatedDeconstruct = false;
                 Unregister(job, "the building could not be destroyed");
             }
         }

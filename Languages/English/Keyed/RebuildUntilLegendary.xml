@@ -19,6 +19,8 @@ A finished building below the target quality is automatically deconstructed and 
   <RebuildUntilLegendary.Success>{0} reached {1} quality! Rebuilding finished.</RebuildUntilLegendary.Success>
   <RebuildUntilLegendary.AlreadyGoodEnough>{0} is already {1} or better.</RebuildUntilLegendary.AlreadyGoodEnough>
   <RebuildUntilLegendary.StoppedCanceled>Rebuilding of {0} stopped: canceled.</RebuildUntilLegendary.StoppedCanceled>
+  <RebuildUntilLegendary.StoppedReplaced>Rebuilding of {0} stopped: the building was replaced by a new blueprint.</RebuildUntilLegendary.StoppedReplaced>
+  <RebuildUntilLegendary.StoppedDeconstructed>Rebuilding of {0} stopped: the building was deconstructed.</RebuildUntilLegendary.StoppedDeconstructed>
   <RebuildUntilLegendary.StoppedOccupied>Rebuilding of {0} stopped: the spot is taken by something else.</RebuildUntilLegendary.StoppedOccupied>
   <RebuildUntilLegendary.StoppedMoved>Rebuilding of {0} stopped: the building was moved away.</RebuildUntilLegendary.StoppedMoved>
   <RebuildUntilLegendary.StoppedGone>Rebuilding of {0} stopped: the building is gone.</RebuildUntilLegendary.StoppedGone>
