@@ -59,6 +59,40 @@ namespace RebuildUntilLegendary
             return "RebuildUntilLegendary.GizmoDesc".Translate(state).ToString();
         }
 
+        /// <summary>Stop button for the in-progress blueprint or frame of a tracked
+        /// spot, so the loop stays controllable while there is no finished building
+        /// to select. The blueprint itself is left alone.</summary>
+        public static Command_Action ForTracked(Thing thing)
+        {
+            if (!thing.Spawned || thing.Map == null)
+            {
+                return null;
+            }
+            MapComponent_RebuildTracker tracker = MapComponent_RebuildTracker.GetFor(thing.Map);
+            RebuildJob job = tracker?.FindJobForThing(thing);
+            if (job == null)
+            {
+                return null;
+            }
+            return new Command_Action
+            {
+                icon = TexButton.AutoRebuild,
+                defaultLabel = "RebuildUntilLegendary.StopGizmoLabel".Translate(),
+                defaultDesc = "RebuildUntilLegendary.StopGizmoDesc".Translate(
+                    job.DescribeTarget(), job.DescribeBuilder(), job.attempts).ToString(),
+                action = delegate
+                {
+                    // Re-fetch: the occupant may have advanced since this gizmo was drawn.
+                    if (tracker.FindJobForThing(thing) is RebuildJob live)
+                    {
+                        tracker.Unregister(live, "stopped from the blueprint");
+                        Messages.Message("RebuildUntilLegendary.StoppedCanceled".Translate(live.DescribeBuilding()),
+                            MessageTypeDefOf.NeutralEvent);
+                    }
+                }
+            };
+        }
+
         private static void ProcessClick(Building clicked, bool wasActive)
         {
             if (Time.frameCount == lastBatchFrame)

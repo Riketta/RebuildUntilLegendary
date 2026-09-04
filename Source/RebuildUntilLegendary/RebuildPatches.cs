@@ -31,17 +31,31 @@ namespace RebuildUntilLegendary
         }
     }
 
-    /// <summary>Adds the toggle to quality-capable player buildings.</summary>
+    /// <summary>Adds the toggle to quality-capable player buildings, and a stop
+    /// button to the in-progress blueprint or frame of a tracked spot (while the
+    /// loop runs there is no finished building to select).</summary>
     [HarmonyPatch(typeof(ThingWithComps), nameof(ThingWithComps.GetGizmos))]
     public static class Patch_ThingWithComps_GetGizmos
     {
         public static void Postfix(ThingWithComps __instance, ref IEnumerable<Gizmo> __result)
         {
-            if (__result == null || !(__instance is Building building) || !RebuildGizmo.Qualifies(building))
+            if (__result == null)
             {
                 return;
             }
-            Gizmo gizmo = RebuildGizmo.For(building);
+            Gizmo gizmo;
+            if (__instance is Blueprint || __instance is Frame)
+            {
+                gizmo = RebuildGizmo.ForTracked(__instance);
+            }
+            else if (__instance is Building building && RebuildGizmo.Qualifies(building))
+            {
+                gizmo = RebuildGizmo.For(building);
+            }
+            else
+            {
+                return;
+            }
             if (gizmo == null)
             {
                 return;

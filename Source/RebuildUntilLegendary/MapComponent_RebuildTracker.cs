@@ -260,8 +260,10 @@ namespace RebuildUntilLegendary
                         DebugLog.VerboseLog("adopted successor " + occupant.ThingID + " for "
                             + job.DescribeBuilding() + " at " + job.DescribeCell() + ".");
                     }
-                    if (occupant is Building building)
+                    if (occupant is Building building && !(occupant is Frame))
                     {
+                        // Frames are Buildings too, but only a finished building has a
+                        // final quality roll - evaluating a frame would kill the loop.
                         EvaluateFinishedBuilding(job, building);
                     }
                     continue;

@@ -23,6 +23,10 @@ Requires [Harmony](https://steamcommunity.com/sharedfiles/filedetails/?id=200946
    - the finished building is at or above the target quality -> the loop stops and the
      toggle unchecks itself with a success message.
 
+While the loop runs you can watch and control it without a finished building: the
+in-progress blueprint or frame gets a **Stop rebuilding** button showing the target
+quality, builder and attempt count.
+
 Everything is stored per building and survives saving/loading, so a rebuild in progress
 continues after loading a save.
 
