@@ -51,13 +51,17 @@ namespace RebuildUntilLegendary
             try
             {
                 harmony.CreateClassProcessor(patchClass).Patch();
-                DebugLog.Log("applied " + patchClass.Name + ".");
             }
             catch (Exception e)
             {
                 Log.Error("[RebuildUntilLegendary] Patch " + patchClass.Name
                     + " could not be applied (game update?). " + e);
+                return;
             }
+            // Kept outside the try: a logging hiccup (e.g. debug logging during mod
+            // loading, when no save exists yet) must not be misreported as a failed
+            // patch, nor hide that the patch actually applied.
+            DebugLog.Log("applied " + patchClass.Name + ".");
         }
 
         public override string SettingsCategory()

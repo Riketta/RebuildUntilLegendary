@@ -53,7 +53,7 @@ namespace RebuildUntilLegendary
             {
                 return;
             }
-            int now = Find.TickManager != null ? Find.TickManager.TicksGame : 0;
+            int now = SafeTicksGame();
             if (NextAllowedTick.TryGetValue(key, out int next) && now < next)
             {
                 return;
@@ -62,9 +62,19 @@ namespace RebuildUntilLegendary
             Verse.Log.Message(Prefix + TickTag() + message);
         }
 
+        /// <summary>Find.TickManager throws while mod constructors run (Current.Game
+        /// is still null during play data loading), so read the tick via the game
+        /// reference and settle for no tag while the game does not exist yet.</summary>
+        private static int SafeTicksGame()
+        {
+            Game game = Current.Game;
+            return game != null && game.tickManager != null ? game.tickManager.TicksGame : 0;
+        }
+
         private static string TickTag()
         {
-            return Find.TickManager != null ? "(t" + Find.TickManager.TicksGame + ") " : "";
+            int ticks = SafeTicksGame();
+            return ticks > 0 ? "(t" + ticks + ") " : "";
         }
     }
 }
