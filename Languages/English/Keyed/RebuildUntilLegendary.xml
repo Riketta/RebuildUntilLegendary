@@ -13,10 +13,18 @@ A finished building below the target quality is automatically deconstructed and 
 
 {0}</RebuildUntilLegendary.GizmoDesc>
   <RebuildUntilLegendary.StateOff>Off. Click to pick a target quality and builder.</RebuildUntilLegendary.StateOff>
-  <RebuildUntilLegendary.StateOn>Target quality: {0} or better\nBuilder: {1}\nAttempts so far: {2}</RebuildUntilLegendary.StateOn>
+  <RebuildUntilLegendary.StateOn>Target quality: {0} or better
+Builder: {1}
+Attempts so far: {2}</RebuildUntilLegendary.StateOn>
 
   <RebuildUntilLegendary.StopGizmoLabel>Stop rebuilding</RebuildUntilLegendary.StopGizmoLabel>
-  <RebuildUntilLegendary.StopGizmoDesc>Stops the automatic rebuild loop for this spot.\n\nTarget quality: {0} or better\nBuilder: {1}\nAttempts so far: {2}\n\nThe current blueprint or frame stays and can be finished by anyone.</RebuildUntilLegendary.StopGizmoDesc>
+  <RebuildUntilLegendary.StopGizmoDesc>Stops the automatic rebuild loop for this spot.
+
+Target quality: {0} or better
+Builder: {1}
+Attempts so far: {2}
+
+The current blueprint or frame stays and can be finished by anyone.</RebuildUntilLegendary.StopGizmoDesc>
 
   <RebuildUntilLegendary.UntilQuality>Until {0} or better</RebuildUntilLegendary.UntilQuality>
   <RebuildUntilLegendary.Anyone>Anyone (default)</RebuildUntilLegendary.Anyone>
