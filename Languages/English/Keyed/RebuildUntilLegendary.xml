@@ -26,6 +26,13 @@ Attempts so far: {2}
 
 The current blueprint or frame stays and can be finished by anyone.</RebuildUntilLegendary.StopGizmoDesc>
 
+  <RebuildUntilLegendary.TrainingMode>Training mode</RebuildUntilLegendary.TrainingMode>
+  <RebuildUntilLegendary.TrainingModeDesc>Cancels every frame of this rebuild at 99% work instead of finishing it.
+Vanilla refunds the frame's full material cost on cancel, and the builder keeps nearly all the construction experience earned, so each training cycle is almost free.
+No building is ever completed while this is on, so the target quality is never reached and the loop runs until you switch it off.
+
+Note: on very cheap buildings a frame can slip past 99% and complete anyway - the normal loop then deconstructs it as usual.</RebuildUntilLegendary.TrainingModeDesc>
+
   <RebuildUntilLegendary.UntilQuality>Until {0} or better</RebuildUntilLegendary.UntilQuality>
   <RebuildUntilLegendary.Anyone>Anyone (default)</RebuildUntilLegendary.Anyone>
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using RimWorld;
 using UnityEngine;
@@ -14,6 +15,8 @@ namespace RebuildUntilLegendary
     internal static class RebuildGizmo
     {
         private static int lastBatchFrame = -1;
+
+        private static int lastTrainingBatchFrame = -1;
 
         /// <summary>Must match the gizmo patch condition: anything that can be
         /// rebuilt through a blueprint and has a quality to chase.</summary>
@@ -93,6 +96,69 @@ namespace RebuildUntilLegendary
             };
         }
 
+        /// <summary>Training-mode toggle on a finished building with an active
+        /// rebuild job: frames of this loop are canceled at 99% work for a full
+        /// material refund instead of being finished.</summary>
+        public static Command_Toggle TrainingFor(Building building)
+        {
+            MapComponent_RebuildTracker tracker = MapComponent_RebuildTracker.GetFor(building.Map);
+            if (tracker == null || tracker.FindJob(building) == null)
+            {
+                return null;
+            }
+            return TrainingToggle(tracker,
+                isActive: delegate
+                {
+                    return tracker.FindJob(building)?.trainingMode ?? false;
+                },
+                toggleAction: delegate
+                {
+                    ProcessTrainingClick(building);
+                });
+        }
+
+        /// <summary>Training-mode toggle on the in-progress blueprint or frame of a
+        /// tracked spot, next to the stop button.</summary>
+        public static Command_Toggle TrainingForTracked(Thing thing)
+        {
+            if (!thing.Spawned || thing.Map == null)
+            {
+                return null;
+            }
+            MapComponent_RebuildTracker tracker = MapComponent_RebuildTracker.GetFor(thing.Map);
+            if (tracker?.FindJobForThing(thing) == null)
+            {
+                return null;
+            }
+            return TrainingToggle(tracker,
+                isActive: delegate
+                {
+                    return tracker.FindJobForThing(thing)?.trainingMode ?? false;
+                },
+                toggleAction: delegate
+                {
+                    // Re-fetch: the occupant may have advanced since this gizmo was drawn.
+                    if (tracker.FindJobForThing(thing) is RebuildJob live)
+                    {
+                        live.trainingMode = !live.trainingMode;
+                        DebugLog.Log("training mode " + (live.trainingMode ? "on" : "off") + " for "
+                            + live.DescribeBuilding() + " at " + live.DescribeCell() + ".");
+                    }
+                });
+        }
+
+        private static Command_Toggle TrainingToggle(MapComponent_RebuildTracker tracker, Func<bool> isActive, Action toggleAction)
+        {
+            return new Command_Toggle
+            {
+                icon = TexButton.AutoRebuild,
+                defaultLabel = "RebuildUntilLegendary.TrainingMode".Translate(),
+                defaultDesc = "RebuildUntilLegendary.TrainingModeDesc".Translate().ToString(),
+                isActive = isActive,
+                toggleAction = toggleAction
+            };
+        }
+
         private static void ProcessClick(Building clicked, bool wasActive)
         {
             if (Time.frameCount == lastBatchFrame)
@@ -152,6 +218,37 @@ namespace RebuildUntilLegendary
                 }
             }
             return batch;
+        }
+
+        /// <summary>Training toggle with multi-select support: one click flips every
+        /// selected building whose job currently has the same training state.</summary>
+        private static void ProcessTrainingClick(Building clicked)
+        {
+            if (Time.frameCount == lastTrainingBatchFrame)
+            {
+                return;
+            }
+            lastTrainingBatchFrame = Time.frameCount;
+            MapComponent_RebuildTracker tracker = MapComponent_RebuildTracker.GetFor(clicked.Map);
+            RebuildJob clickedJob = tracker?.FindJob(clicked);
+            if (clickedJob == null)
+            {
+                return;
+            }
+            bool stateBefore = clickedJob.trainingMode;
+            foreach (object selected in Find.Selector.SelectedObjects)
+            {
+                if (selected is Building building && Qualifies(building) && building.Map == clicked.Map)
+                {
+                    RebuildJob job = tracker.FindJob(building);
+                    if (job != null && job.trainingMode == stateBefore)
+                    {
+                        job.trainingMode = !stateBefore;
+                        DebugLog.Log("training mode " + (job.trainingMode ? "on" : "off") + " for "
+                            + job.DescribeBuilding() + " at " + job.DescribeCell() + ".");
+                    }
+                }
+            }
         }
     }
 }

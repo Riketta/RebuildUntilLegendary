@@ -31,9 +31,9 @@ namespace RebuildUntilLegendary
         }
     }
 
-    /// <summary>Adds the toggle to quality-capable player buildings, and a stop
-    /// button to the in-progress blueprint or frame of a tracked spot (while the
-    /// loop runs there is no finished building to select).</summary>
+    /// <summary>Adds the toggle to quality-capable player buildings, and the stop
+    /// plus training-mode buttons to the in-progress blueprint or frame of a tracked
+    /// spot (while the loop runs there is no finished building to select).</summary>
     [HarmonyPatch(typeof(ThingWithComps), nameof(ThingWithComps.GetGizmos))]
     public static class Patch_ThingWithComps_GetGizmos
     {
@@ -43,28 +43,39 @@ namespace RebuildUntilLegendary
             {
                 return;
             }
-            Gizmo gizmo;
+            List<Gizmo> extra = null;
             if (__instance is Blueprint || __instance is Frame)
             {
-                gizmo = RebuildGizmo.ForTracked(__instance);
+                Gizmo stop = RebuildGizmo.ForTracked(__instance);
+                Gizmo training = RebuildGizmo.TrainingForTracked(__instance);
+                if (stop != null || training != null)
+                {
+                    extra = new List<Gizmo>(2) { stop, training };
+                }
             }
             else if (__instance is Building building && RebuildGizmo.Qualifies(building))
             {
-                gizmo = RebuildGizmo.For(building);
+                Gizmo toggle = RebuildGizmo.For(building);
+                Gizmo training = RebuildGizmo.TrainingFor(building);
+                if (toggle != null || training != null)
+                {
+                    extra = new List<Gizmo>(2) { toggle, training };
+                }
             }
-            else
+            if (extra == null)
             {
                 return;
             }
-            if (gizmo == null)
+            extra.RemoveAll(gizmo => gizmo == null);
+            if (extra.Count == 0)
             {
                 return;
             }
             // Materialize once: gizmo collections can be enumerated more than once,
-            // and a lazy Concat would recreate the gizmo (new identity, breaking
+            // and a lazy Concat would recreate the gizmos (new identity, breaking
             // grouping/state) on every pass.
             List<Gizmo> list = __result.ToList();
-            list.Add(gizmo);
+            list.AddRange(extra);
             __result = list;
         }
     }

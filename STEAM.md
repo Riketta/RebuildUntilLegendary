@@ -21,6 +21,11 @@ Keep rebuilding a building until it reaches the quality you want - and stop by i
 [*]Every attempt is a full vanilla construction job, so the chosen builder earns experience each time - and as their skill rises, quality rolls improve and the loop converges on masterwork and legendary by itself. Point it at wooden stools to train a rookie, or at a grand throne to grind it out.
 [*]If the chosen pawn dies or otherwise leaves the colony, the restriction is lifted so the job can always finish.[/list]
 
+[b]Training mode[/b]
+[list][*]A toggle on any active rebuild (on the building, or on its blueprint): frames are canceled at 99% work instead of being finished.
+[*]A canceled frame is refunded at 100% of its materials by vanilla, and the builder keeps nearly all the construction experience - each training cycle is almost free.
+[*]No building is completed in this mode, so the loop runs until you switch it off - perfect for leveling a rookie on cheap furniture.[/list]
+
 [h3]Settings[/h3]
 "Helpers haul materials" (on by default) lets other colonists deliver materials to a restricted blueprint while the chosen builder does all the construction and rolls every quality. Developer mode additionally offers debug logging (every step of every rebuild loop) and verbose logging (denied attempts and retries, throttled).
 
@@ -29,7 +34,8 @@ Keep rebuilding a building until it reaches the quality you want - and stop by i
 [*]The mod never fights the player: canceling the blueprint, deconstructing or replacing the building yourself, or moving it away stops the loop cleanly with a message.
 [*]A rebuilt storage building keeps its filter settings but leaves its storage group.
 [*]Switching the toggle off stops the loop immediately; a blueprint already placed stays on the map as a normal blueprint.
-[*]With helper hauling disabled, only the chosen pawn delivers materials too, which can make each attempt slow on big builds.[/list]
+[*]With helper hauling disabled, only the chosen pawn delivers materials too, which can make each attempt slow on big builds.
+[*]With training mode on, the target quality is never reached (no frame is finished), so the loop runs almost for free until you switch the toggle off. Very cheap builds can slip past the 99% mark and complete anyway.[/list]
 
 [h3]Compatibility[/h3]
 Requires RimWorld 1.6 and [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2009463077]Harmony[/url]; all DLCs are optional.

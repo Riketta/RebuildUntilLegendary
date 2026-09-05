@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using RimWorld;
+using UnityEngine;
 using Verse;
 
 namespace RebuildUntilLegendary
@@ -16,6 +17,10 @@ namespace RebuildUntilLegendary
         private const int CheckIntervalTicks = 15;
 
         private const int RetryIntervalTicks = 250;
+
+        /// <summary>Training mode cancels a frame once at most this fraction of its
+        /// work remains left to do (i.e. at 99% completion).</summary>
+        private const float TrainingInterruptAtWorkLeftFraction = 0.01f;
 
         /// <summary>How long a same-def occupant at the cell counts as the successor
         /// of a tracked blueprint/frame. Every vanilla handover (frame spawn, frame
@@ -165,6 +170,16 @@ namespace RebuildUntilLegendary
             int now = Find.TickManager.TicksGame;
             switch (mode)
             {
+                case DestroyMode.Cancel when t is Frame && job.modInitiatedCancel:
+                    // Our own training-mode interrupt: vanilla refunds the frame's
+                    // full materials, and the loop continues with a fresh blueprint.
+                    job.modInitiatedCancel = false;
+                    job.pendingPlacement = true;
+                    job.retryAtTick = 0;
+                    DebugLog.Log(job.DescribeBuilding() + " at " + job.DescribeCell()
+                        + " canceled at " + Mathf.RoundToInt(((Frame)t).PercentComplete * 100f)
+                        + "% work (training mode) - materials refunded, will place a new blueprint.");
+                    return;
                 case DestroyMode.Cancel:
                     Unregister(job, "canceled by the player");
                     Messages.Message("RebuildUntilLegendary.StoppedCanceled".Translate(job.DescribeBuilding()),
@@ -230,11 +245,26 @@ namespace RebuildUntilLegendary
 
         public override void MapComponentTick()
         {
-            if (Jobs.Count == 0 || Find.TickManager.TicksGame % CheckIntervalTicks != 0)
+            if (Jobs.Count == 0)
             {
                 return;
             }
             int now = Find.TickManager.TicksGame;
+            // Training mode must catch a frame within its last 1% of work, which
+            // the 15-tick poll can miss on cheap buildings - those jobs are checked
+            // every tick instead. The list is tiny, and the check itself is a single
+            // cell lookup per training job.
+            for (int i = Jobs.Count - 1; i >= 0; i--)
+            {
+                if (Jobs[i].trainingMode)
+                {
+                    TickTrainingJob(Jobs[i]);
+                }
+            }
+            if (now % CheckIntervalTicks != 0)
+            {
+                return;
+            }
             for (int i = Jobs.Count - 1; i >= 0; i--)
             {
                 RebuildJob job = Jobs[i];
@@ -312,6 +342,31 @@ namespace RebuildUntilLegendary
                 job.builder = null;
                 Messages.Message("RebuildUntilLegendary.BuilderGone".Translate(job.DescribeBuilding()),
                     MessageTypeDefOf.NeutralEvent);
+            }
+        }
+
+        /// <summary>Runs every tick for jobs in training mode: cancels the in-progress
+        /// frame once its remaining work drops to the interrupt threshold. Vanilla
+        /// refunds the frame's full materials on a cancel while the builder keeps the
+        /// experience earned so far, which makes each training cycle nearly free.</summary>
+        private void TickTrainingJob(RebuildJob job)
+        {
+            Thing occupant = FindOccupant(job);
+            if (!(occupant is Frame frame)
+                || frame.WorkLeft > frame.WorkToBuild * TrainingInterruptAtWorkLeftFraction)
+            {
+                return;
+            }
+            DebugLog.Log("training mode: canceling " + job.DescribeBuilding() + " at " + job.DescribeCell()
+                + " at " + Mathf.RoundToInt(frame.PercentComplete * 100f) + "% work for a full refund.");
+            job.modInitiatedCancel = true;
+            frame.Destroy(DestroyMode.Cancel);
+            if (!frame.Destroyed)
+            {
+                // Destroy was refused (e.g. another mod blocked it). Stop instead of
+                // hammering the same call every tick.
+                job.modInitiatedCancel = false;
+                Unregister(job, "the frame could not be canceled");
             }
         }
 

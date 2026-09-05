@@ -27,7 +27,7 @@ namespace RebuildUntilLegendary
         public const string PackageId = "Riketta.RebuildUntilLegendary";
 
         /// <summary>Kept in sync with About/About.xml modVersion.</summary>
-        public const string Version = "1.0.0";
+        public const string Version = "1.1.0";
 
         public static RebuildUntilLegendarySettings Settings;
 

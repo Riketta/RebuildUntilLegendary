@@ -24,8 +24,7 @@ Requires [Harmony](https://steamcommunity.com/sharedfiles/filedetails/?id=200946
      toggle unchecks itself with a success message.
 
 While the loop runs you can watch and control it without a finished building: the
-in-progress blueprint or frame gets a **Stop rebuilding** button showing the target
-quality, builder and attempt count.
+in-progress blueprint or frame gets **Stop rebuilding** and **Training mode** buttons.
 
 Everything is stored per building and survives saving/loading, so a rebuild in progress
 continues after loading a save.
@@ -45,6 +44,23 @@ Pick something cheap like wooden stools to train a rookie, or aim the loop at a 
 sculpture once the builder is ready. Choosing a single builder in the picker keeps the
 training focused: only that pawn works the blueprint, so the experience goes exactly
 where you want it.
+
+## Training mode (full refund)
+
+Every active rebuild gets a **Training mode** toggle - on the finished building next to
+"Rebuild until...", and on the in-progress blueprint or frame next to "Stop rebuilding".
+With it on, the loop cancels every frame at 99% work instead of finishing it:
+
+- a canceled frame is refunded by vanilla at **100% of its materials** (a finished
+  building only returns part when deconstructed), so each training cycle is almost free;
+- construction experience is earned while working the frame, so the builder keeps
+  nearly all of it - a cheap and steady way to level construction;
+- no building is ever completed, so the target quality is never reached and the loop
+  runs until you switch the toggle off.
+
+Switch it off at any time and the loop finishes frames normally again. Note that on
+very cheap builds a frame can slip past 99% between work ticks and complete anyway;
+the normal loop then deconstructs it as usual.
 
 ## Builder restriction
 
@@ -100,6 +116,8 @@ In developer mode, additionally:
   if unwanted).
 - With **Helpers haul materials** disabled, only the chosen pawn delivers materials
   too, which can make each attempt slow on big builds.
+- With training mode on, the target quality is never reached (no frame is finished),
+  so the loop runs almost for free until the toggle is switched off.
 
 ## For developers
 
@@ -115,8 +133,9 @@ The project reads the game path from the `RimWorldDir` property (default
 Harmony patches, each wrapped so one failure never breaks the others:
 
 - `Thing.Destroy` (prefix) - tracks destruction of tracked blueprints/frames/buildings;
-- `ThingWithComps.GetGizmos` (postfix) - adds the toggle to quality-capable buildings
-  and the stop button to their in-progress blueprints/frames;
+- `ThingWithComps.GetGizmos` (postfix) - adds the toggle and the training-mode toggle
+  to quality-capable buildings, and the stop and training buttons to their in-progress
+  blueprints/frames;
 - `WorkGiver_ConstructDeliverResourcesToBlueprints.HasJobOnThing/JobOnThing`,
   `WorkGiver_ConstructDeliverResourcesToFrames.HasJobOnThing/JobOnThing`,
   `WorkGiver_ConstructFinishFrames.JobOnThing` and `GenConstruct.CanConstruct`

@@ -29,6 +29,13 @@ namespace RebuildUntilLegendary
         /// <summary>Null means anyone may build.</summary>
         public Pawn builder;
 
+        /// <summary>When on, frames are canceled at 99% work instead of finishing:
+        /// vanilla refunds the frame's full materials on cancel while the builder
+        /// keeps nearly all the construction experience. No building is ever
+        /// completed in this mode, so the target quality is never reached and the
+        /// loop runs until the toggle is switched off.</summary>
+        public bool trainingMode;
+
         public int attempts;
 
         public bool pendingPlacement;
@@ -46,6 +53,10 @@ namespace RebuildUntilLegendary
         /// so the destroy handler can tell its own deconstruction from a player's.
         /// Consumed synchronously by the Thing.Destroy prefix, never persisted.</summary>
         public bool modInitiatedDeconstruct;
+
+        /// <summary>Same as modInitiatedDeconstruct, but for the training-mode frame
+        /// cancel (DestroyMode.Cancel normally means the player canceled).</summary>
+        public bool modInitiatedCancel;
 
         /// <summary>Tick until which a new occupant at the cell is trusted as the
         /// successor of a tracked thing (blueprint - frame - building handover, or a
@@ -65,6 +76,7 @@ namespace RebuildUntilLegendary
             Scribe_Defs.Look(ref styleDef, "styleDef");
             Scribe_Values.Look(ref targetQuality, "targetQuality", QualityCategory.Legendary);
             Scribe_References.Look(ref builder, "builder");
+            Scribe_Values.Look(ref trainingMode, "trainingMode", false);
             Scribe_Values.Look(ref attempts, "attempts", 0);
             Scribe_Values.Look(ref pendingPlacement, "pendingPlacement", false);
             Scribe_Values.Look(ref retryAtTick, "retryAtTick", 0);
