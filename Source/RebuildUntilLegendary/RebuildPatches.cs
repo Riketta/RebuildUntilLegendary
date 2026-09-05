@@ -201,8 +201,13 @@ namespace RebuildUntilLegendary
             {
                 return false;
             }
-            DebugLog.VerboseThrottled("deny_" + pawn.thingIDNumber + "_" + t.thingIDNumber,
-                "denied " + pawn.LabelShortCap + " work on " + t.ThingID + " (restricted to " + job.DescribeBuilder() + ").");
+            if (DebugLog.Verbose)
+            {
+                // Guarded: building the throttle key and message would allocate on
+                // every denied workgiver scan even with logging off.
+                DebugLog.VerboseThrottled("deny_" + pawn.thingIDNumber + "_" + t.thingIDNumber,
+                    "denied " + pawn.LabelShortCap + " work on " + t.ThingID + " (restricted to " + job.DescribeBuilder() + ").");
+            }
             return true;
         }
     }
