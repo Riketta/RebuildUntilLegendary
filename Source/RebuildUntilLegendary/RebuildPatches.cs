@@ -31,9 +31,10 @@ namespace RebuildUntilLegendary
         }
     }
 
-    /// <summary>Adds the toggle to quality-capable player buildings, and the stop
-    /// plus training-mode buttons to the in-progress blueprint or frame of a tracked
-    /// spot (while the loop runs there is no finished building to select).</summary>
+    /// <summary>Adds the toggle to quality-capable player buildings and equally to
+    /// their in-progress blueprints and frames (so a loop or training job can be
+    /// started without finishing the building first), plus the stop and
+    /// training-mode buttons to the blueprint or frame of a tracked spot.</summary>
     [HarmonyPatch(typeof(ThingWithComps), nameof(ThingWithComps.GetGizmos))]
     public static class Patch_ThingWithComps_GetGizmos
     {
@@ -46,17 +47,21 @@ namespace RebuildUntilLegendary
             List<Gizmo> extra = null;
             if (__instance is Blueprint || __instance is Frame)
             {
+                // The main toggle can start a loop straight from a blueprint or
+                // frame; stop and training only appear once it is tracked. Install
+                // blueprints never qualify (see RebuildGizmo.Qualifies).
+                Gizmo toggle = RebuildGizmo.For(__instance);
                 Gizmo stop = RebuildGizmo.ForTracked(__instance);
-                Gizmo training = RebuildGizmo.TrainingForTracked(__instance);
-                if (stop != null || training != null)
+                Gizmo training = RebuildGizmo.TrainingFor(__instance);
+                if (toggle != null || stop != null || training != null)
                 {
-                    extra = new List<Gizmo>(2) { stop, training };
+                    extra = new List<Gizmo>(3) { toggle, stop, training };
                 }
             }
-            else if (__instance is Building building && RebuildGizmo.Qualifies(building))
+            else if (__instance is Building)
             {
-                Gizmo toggle = RebuildGizmo.For(building);
-                Gizmo training = RebuildGizmo.TrainingFor(building);
+                Gizmo toggle = RebuildGizmo.For(__instance);
+                Gizmo training = RebuildGizmo.TrainingFor(__instance);
                 if (toggle != null || training != null)
                 {
                     extra = new List<Gizmo>(2) { toggle, training };

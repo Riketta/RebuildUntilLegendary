@@ -79,18 +79,6 @@ namespace RebuildUntilLegendary
             return false;
         }
 
-        public RebuildJob FindJob(Building building)
-        {
-            for (int i = 0; i < Jobs.Count; i++)
-            {
-                if (Jobs[i].cell == building.Position && Jobs[i].buildDef == building.def)
-                {
-                    return Jobs[i];
-                }
-            }
-            return null;
-        }
-
         public RebuildJob FindJobForThing(Thing t)
         {
             for (int i = 0; i < Jobs.Count; i++)
@@ -103,47 +91,76 @@ namespace RebuildUntilLegendary
             return null;
         }
 
-        public void Register(Building building, QualityCategory target, Pawn builder)
+        /// <summary>Starts a rebuild loop from a finished building, its in-progress
+        /// frame or an already placed blueprint - all three resolve to the same
+        /// buildable def, material and style the replacement blueprints reproduce.</summary>
+        public void Register(Thing constructible, QualityCategory target, Pawn builder)
         {
-            RebuildJob existing = FindJob(building);
+            RebuildJob existing = FindJobForThing(constructible);
             if (existing != null)
             {
-                DebugLog.Log("not activating " + building.LabelCap + " at " + existing.DescribeCell()
+                DebugLog.Log("not activating " + constructible.LabelCap + " at " + existing.DescribeCell()
                     + ": already rebuilding until " + existing.DescribeTarget() + ".");
                 return;
             }
-            if (building.TryGetQuality(out QualityCategory current) && current >= target)
+            if (constructible is Building finished && !(constructible is Frame)
+                && finished.TryGetQuality(out QualityCategory current) && current >= target)
             {
                 Messages.Message("RebuildUntilLegendary.AlreadyGoodEnough".Translate(
-                    building.LabelCap, target.GetLabel().CapitalizeFirst()),
-                    building, MessageTypeDefOf.NeutralEvent);
-                DebugLog.Log("not activating " + building.LabelCap + " at " + building.Position
+                    finished.LabelCap, target.GetLabel().CapitalizeFirst()),
+                    finished, MessageTypeDefOf.NeutralEvent);
+                DebugLog.Log("not activating " + finished.LabelCap + " at " + finished.Position
                     + ": already " + current + ", target was " + target + ".");
                 return;
             }
             RebuildJob job = new RebuildJob
             {
-                cell = building.Position,
-                rotation = building.Rotation,
-                buildDef = building.def,
-                stuff = building.Stuff,
-                styleSourcePrecept = building.StyleSourcePrecept,
-                styleDef = building.StyleDef,
+                cell = constructible.Position,
+                rotation = constructible.Rotation,
+                buildDef = RebuildJob.BuildDefOf(constructible),
+                stuff = StuffOf(constructible),
+                styleSourcePrecept = constructible.StyleSourcePrecept,
+                styleDef = constructible.StyleDef,
                 targetQuality = target,
                 builder = builder,
-                occupantIdNumber = building.thingIDNumber
+                occupantIdNumber = constructible.thingIDNumber
             };
-            if (building is Building_Storage storage)
-            {
-                job.CaptureStorageSettings(storage.GetStoreSettings());
-            }
+            CaptureStorageSettings(constructible, job);
             Jobs.Add(job);
             Messages.Message("RebuildUntilLegendary.Activated".Translate(
-                building.LabelCap, job.DescribeTarget(), job.DescribeBuilder()),
-                building, MessageTypeDefOf.NeutralEvent);
+                constructible.LabelCap, job.DescribeTarget(), job.DescribeBuilder()),
+                constructible, MessageTypeDefOf.NeutralEvent);
             DebugLog.Log("activated " + job.DescribeBuilding() + " at " + job.DescribeCell()
-                + ": target " + target + ", builder " + job.DescribeBuilder()
+                + " from a " + constructible.GetType().Name + ": target " + target
+                + ", builder " + job.DescribeBuilder()
                 + ", rotation " + job.rotation + ", stuff " + (job.stuff != null ? job.stuff.label : "none") + ".");
+        }
+
+        /// <summary>Blueprints keep their material in stuffToUse, frames and finished
+        /// buildings in the regular Thing.Stuff slot.</summary>
+        private static ThingDef StuffOf(Thing constructible)
+        {
+            if (constructible is Blueprint_Build blueprint)
+            {
+                return blueprint.stuffToUse;
+            }
+            return constructible.Stuff;
+        }
+
+        private void CaptureStorageSettings(Thing constructible, RebuildJob job)
+        {
+            switch (constructible)
+            {
+                case Building_Storage storage:
+                    job.CaptureStorageSettings(storage.GetStoreSettings());
+                    break;
+                case Blueprint_Storage storageBlueprint:
+                    job.CaptureStorageSettings(storageBlueprint.settings);
+                    break;
+                case Frame frame:
+                    job.CaptureStorageSettings(frame.GetStoreSettings());
+                    break;
+            }
         }
 
         public void Unregister(RebuildJob job, string reason)

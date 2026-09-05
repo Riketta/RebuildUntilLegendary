@@ -10,12 +10,12 @@ Keep rebuilding a building until it reaches the quality you want - and stop by i
 
 [h3]What it does[/h3]
 [b]The rebuild loop[/b]
-[list][*]Select any building with a quality stat - art, furniture, turrets, benches, anything from vanilla, DLCs or mods - and toggle "Rebuild until...".
+[list][*]Select any building with a quality stat - art, furniture, turrets, benches, anything from vanilla, DLCs or mods - and toggle "Rebuild until...". An already placed blueprint or a partially built frame works too, so the loop can start before the building exists.
 [*]Pick the target quality (e.g. "Until Legendary or better") and who may build it: anyone (default) or one specific pawn, chosen from a picker with portraits and construction levels.
 [*]Every finished result below the target quality is deconstructed the normal vanilla way (usual material refund) and a fresh blueprint is placed on the same spot with the same material, style, rotation and storage settings.
 [*]As soon as the target quality (or better) is rolled, the toggle switches itself off with a success message.
 [*]Deconstructing the building by hand counts as another attempt: a fresh blueprint appears on the same spot (a mod option can stop the loop on manual deconstructs instead).
-[*]The in-progress blueprint or frame gets a "Stop rebuilding" button showing the target quality, builder and attempt count, and a running rebuild survives saving and loading.[/list]
+[*]The in-progress blueprint or frame gets the same "Rebuild until..." toggle plus a "Stop rebuilding" button showing the target quality, builder and attempt count, and a running rebuild survives saving and loading.[/list]
 
 [b]Single-builder training[/b]
 [list][*]With a specific pawn chosen, only that pawn does the construction - both automatic work assignment and right-click orders. By default other colonists may still deliver materials to fill the blueprint faster (a mod option turns helper hauling off).
@@ -23,7 +23,7 @@ Keep rebuilding a building until it reaches the quality you want - and stop by i
 [*]If the chosen pawn dies or otherwise leaves the colony, the restriction is lifted so the job can always finish.[/list]
 
 [b]Training mode[/b]
-[list][*]A toggle on any active rebuild (on the building, or on its blueprint): frames are canceled at 99% work instead of being finished.
+[list][*]A toggle on any active rebuild (on the building, or on its blueprint or frame): frames are canceled at 99% work instead of being finished.
 [*]A canceled frame is refunded at 100% of its materials by vanilla, and the builder keeps nearly all the construction experience - each training cycle is almost free.
 [*]No building is completed in this mode, so the loop runs until you switch it off - perfect for leveling a rookie on cheap furniture.[/list]
 

@@ -12,6 +12,8 @@ Requires [Harmony](https://steamcommunity.com/sharedfiles/filedetails/?id=200946
 
 1. Select a quality-capable building (art, furniture, turrets, benches - anything with a
    quality stat, vanilla, DLC or modded) and click the new **Rebuild until...** toggle.
+   A placed blueprint or a partially built frame works too - the loop can start before
+   the building exists.
 2. Pick the target quality (e.g. *Until Legendary or better*).
 3. Pick who may build it: **Anyone (default)** or one specific pawn - the picker lists
    colonists with portraits and their construction level, like the gene extractor's pawn
@@ -24,7 +26,9 @@ Requires [Harmony](https://steamcommunity.com/sharedfiles/filedetails/?id=200946
      toggle unchecks itself with a success message.
 
 While the loop runs you can watch and control it without a finished building: the
-in-progress blueprint or frame gets **Stop rebuilding** and **Training mode** buttons.
+in-progress blueprint or frame gets the same **Rebuild until...** toggle plus
+**Stop rebuilding** and **Training mode** buttons. That also means a training job can
+be set up straight from a blueprint, with no completed building at all.
 
 Everything is stored per building and survives saving/loading, so a rebuild in progress
 continues after loading a save.
@@ -139,8 +143,8 @@ Harmony patches, each wrapped so one failure never breaks the others:
 
 - `Thing.Destroy` (prefix) - tracks destruction of tracked blueprints/frames/buildings;
 - `ThingWithComps.GetGizmos` (postfix) - adds the toggle and the training-mode toggle
-  to quality-capable buildings, and the stop and training buttons to their in-progress
-  blueprints/frames;
+  to quality-capable buildings and to their placed blueprints/frames, plus the stop
+  button to the in-progress blueprint/frame of a running loop;
 - `WorkGiver_ConstructDeliverResourcesToBlueprints.HasJobOnThing/JobOnThing`,
   `WorkGiver_ConstructDeliverResourcesToFrames.HasJobOnThing/JobOnThing`,
   `WorkGiver_ConstructFinishFrames.JobOnThing` and `GenConstruct.CanConstruct`

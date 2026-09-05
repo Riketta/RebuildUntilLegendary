@@ -3,13 +3,13 @@
   <name>Rebuild Until LEGENDARY</name>
   <author>Riketta</author>
   <packageId>Riketta.RebuildUntilLegendary</packageId>
-  <modVersion IgnoreIfNoMatchingField="True">1.1.0</modVersion>
+  <modVersion IgnoreIfNoMatchingField="True">1.2.0</modVersion>
   <supportedVersions>
     <li>1.6</li>
   </supportedVersions>
   <description>Rebuild a building over and over until it reaches the quality you want - and stop by itself.
 
-Select a building and toggle "Rebuild until...": choose the target quality and, optionally, a single pawn who is allowed to build it. A finished building below the target quality is automatically deconstructed and its blueprint is placed again on the same spot with the same material, style and rotation. As soon as the target quality (or better) is rolled, the toggle switches itself off.
+Select a building, its already placed blueprint or its frame and toggle "Rebuild until...": choose the target quality and, optionally, a single pawn who is allowed to build it. A finished building below the target quality is automatically deconstructed and its blueprint is placed again on the same spot with the same material, style and rotation. As soon as the target quality (or better) is rolled, the toggle switches itself off.
 
 Works with any quality-capable building from vanilla, DLCs or mods - art, furniture, turrets, production benches, anything with a quality stat.
 
