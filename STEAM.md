@@ -12,7 +12,7 @@ Keep rebuilding a building until it reaches the quality you want - and stop by i
 [b]The rebuild loop[/b]
 [list][*]Select any building with a quality stat - art, furniture, turrets, benches, anything from vanilla, DLCs or mods - and toggle "Rebuild until...". An already placed blueprint or a partially built frame works too, so the loop can start before the building exists.
 [*]Pick the target quality (e.g. "Until Legendary or better") and who may build it: anyone (default) or one specific pawn, chosen from a picker with portraits and construction levels.
-[*]Every finished result below the target quality is deconstructed the normal vanilla way (usual material refund) and a fresh blueprint is placed on the same spot with the same material, style, rotation and storage settings.
+[*]Every finished result below the target quality gets a normal vanilla deconstruct order that a colonist performs (usual material refund), and once it is down a fresh blueprint is placed on the same spot with the same material, style, rotation and storage settings. A mod option can make below-target buildings vanish instantly instead.
 [*]As soon as the target quality (or better) is rolled, the toggle switches itself off with a success message.
 [*]Deconstructing the building by hand counts as another attempt: a fresh blueprint appears on the same spot (a mod option can stop the loop on manual deconstructs instead).
 [*]The in-progress blueprint or frame gets the same "Rebuild until..." toggle plus a "Stop rebuilding" button showing the target quality, builder and attempt count, and a running rebuild survives saving and loading.[/list]
@@ -28,10 +28,11 @@ Keep rebuilding a building until it reaches the quality you want - and stop by i
 [*]No building is completed in this mode, so the loop runs until you switch it off - perfect for leveling a rookie on cheap furniture.[/list]
 
 [h3]Settings[/h3]
-"Manual deconstruct keeps rebuilding" (on by default) makes your own deconstruct order count as another attempt - a fresh blueprint appears on the same spot instead of ending the loop. "Helpers haul materials" (on by default) lets other colonists deliver materials to a restricted blueprint while the chosen builder does all the construction and rolls every quality. Developer mode additionally offers debug logging (every step of every rebuild loop) and verbose logging (denied attempts and retries, throttled).
+"Pawn deconstruction" (on by default) tears a below-target building down with a normal colonist deconstruct order; turning it off makes the mod remove such buildings instantly. "Manual deconstruct keeps rebuilding" (on by default) makes your own deconstruct order count as another attempt - a fresh blueprint appears on the same spot instead of ending the loop. "Helpers haul materials" (on by default) lets other colonists deliver materials to a restricted blueprint while the chosen builder does all the construction and rolls every quality. Developer mode additionally offers debug logging (every step of every rebuild loop) and verbose logging (denied attempts and retries, throttled).
 
 [h3]Things to keep in mind[/h3]
 [list][*]Each attempt costs materials exactly like a manual deconstruct-rebuild cycle would.
+[*]With pawn deconstruction on (default), the loop waits while a colonist tears the building down; canceling the queued order just makes the mod queue it again. If nobody can do the job, vanilla rules apply and the loop simply waits.
 [*]The mod never fights the player: canceling the blueprint, replacing the building yourself, or moving it away stops the loop cleanly with a message. Deconstructing by hand is treated as another attempt by default (a mod option stops the loop instead), and the toggle or the stop button always ends it.
 [*]A rebuilt storage building keeps its filter settings but leaves its storage group.
 [*]Switching the toggle off stops the loop immediately; a blueprint already placed stays on the map as a normal blueprint.

@@ -3,6 +3,9 @@
 
   <RebuildUntilLegendary.SettingsCategory>Rebuild Until LEGENDARY</RebuildUntilLegendary.SettingsCategory>
 
+  <RebuildUntilLegendary.PawnDeconstruction>Pawn deconstruction</RebuildUntilLegendary.PawnDeconstruction>
+  <RebuildUntilLegendary.PawnDeconstructionTip>When a finished building misses the target quality, the loop queues a normal deconstruct order and a colonist tears the building down, like any vanilla deconstruction (takes work time). Turn this off to make below-target buildings vanish instantly instead.</RebuildUntilLegendary.PawnDeconstructionTip>
+
   <RebuildUntilLegendary.ManualDeconstruct>Manual deconstruct keeps rebuilding</RebuildUntilLegendary.ManualDeconstruct>
   <RebuildUntilLegendary.ManualDeconstructTip>When you deconstruct the tracked building yourself with the vanilla deconstruct order, the loop treats it as another attempt and places a fresh blueprint on the same spot. Turn this off to stop the loop instead when you deconstruct by hand (the toggle and the stop button always stop it).</RebuildUntilLegendary.ManualDeconstructTip>
 

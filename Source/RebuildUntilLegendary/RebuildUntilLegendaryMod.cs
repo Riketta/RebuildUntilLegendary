@@ -7,6 +7,8 @@ namespace RebuildUntilLegendary
 {
     public class RebuildUntilLegendarySettings : ModSettings
     {
+        public bool pawnDeconstruction = true;
+
         public bool manualDeconstructContinues = true;
 
         public bool anyoneHauls = true;
@@ -18,6 +20,7 @@ namespace RebuildUntilLegendary
         public override void ExposeData()
         {
             base.ExposeData();
+            Scribe_Values.Look(ref pawnDeconstruction, "pawnDeconstruction", true);
             Scribe_Values.Look(ref manualDeconstructContinues, "manualDeconstructContinues", true);
             Scribe_Values.Look(ref anyoneHauls, "anyoneHauls", true);
             Scribe_Values.Look(ref debugLogging, "debugLogging", false);
@@ -30,7 +33,7 @@ namespace RebuildUntilLegendary
         public const string PackageId = "Riketta.RebuildUntilLegendary";
 
         /// <summary>Kept in sync with About/About.xml modVersion.</summary>
-        public const string Version = "1.2.0";
+        public const string Version = "1.3.0";
 
         public static RebuildUntilLegendarySettings Settings;
 
@@ -79,6 +82,9 @@ namespace RebuildUntilLegendary
         {
             Listing_Standard list = new Listing_Standard();
             list.Begin(inRect);
+            list.CheckboxLabeled("RebuildUntilLegendary.PawnDeconstruction".Translate(),
+                ref Settings.pawnDeconstruction, "RebuildUntilLegendary.PawnDeconstructionTip".Translate());
+            list.Gap(12f);
             list.CheckboxLabeled("RebuildUntilLegendary.ManualDeconstruct".Translate(),
                 ref Settings.manualDeconstructContinues, "RebuildUntilLegendary.ManualDeconstructTip".Translate());
             list.Gap(12f);

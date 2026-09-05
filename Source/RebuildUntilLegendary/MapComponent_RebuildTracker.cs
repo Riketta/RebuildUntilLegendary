@@ -206,6 +206,7 @@ namespace RebuildUntilLegendary
                     // The player is replacing this building with another blueprint
                     // (upgrades, Replace Stuff-style swaps) - the loop must not claim
                     // the replacement.
+                    job.modInitiatedDeconstruct = false;
                     Unregister(job, "the building is being replaced by a new blueprint");
                     Messages.Message("RebuildUntilLegendary.StoppedReplaced".Translate(job.DescribeBuilding()),
                         MessageTypeDefOf.NeutralEvent);
@@ -263,6 +264,7 @@ namespace RebuildUntilLegendary
                     // Destroyed by damage, quest, teleport, ... Keep rebuilding; the
                     // successor window also adopts vanilla's auto-rebuild blueprint
                     // when that option is enabled.
+                    job.modInitiatedDeconstruct = false;
                     job.pendingPlacement = true;
                     job.retryAtTick = 0;
                     job.expectSuccessorUntilTick = now + SuccessorGraceTicks;
@@ -427,6 +429,36 @@ namespace RebuildUntilLegendary
                 Unregister(job, "the building cannot be deconstructed");
                 Messages.Message("RebuildUntilLegendary.StoppedNotDeconstructable".Translate(job.DescribeBuilding()),
                     MessageTypeDefOf.NeutralEvent);
+                return;
+            }
+            if (RebuildUntilLegendaryMod.Settings?.pawnDeconstruction ?? true)
+            {
+                // Queue a vanilla deconstruct order and wait for a colonist to do
+                // the tear-down like any manual order. An uninstall order (the
+                // player moving the building) is left alone - the moved-away flow
+                // ends the loop when it completes.
+                if (map.designationManager.DesignationOn(building, DesignationDefOf.Uninstall) != null)
+                {
+                    return;
+                }
+                if (map.designationManager.DesignationOn(building, DesignationDefOf.Deconstruct) == null)
+                {
+                    // A missing order while our flag is set means the player canceled
+                    // it - re-queue without counting the same building twice.
+                    bool requeuedAfterCancel = job.modInitiatedDeconstruct;
+                    if (!requeuedAfterCancel)
+                    {
+                        job.attempts++;
+                    }
+                    job.modInitiatedDeconstruct = true;
+                    map.designationManager.AddDesignation(new Designation(building, DesignationDefOf.Deconstruct));
+                    DebugLog.Log("quality " + quality + " below " + job.targetQuality
+                        + (requeuedAfterCancel
+                            ? " - deconstruct order was canceled, re-queued for " + job.DescribeBuilding()
+                            + " at " + job.DescribeCell() + " (attempt " + job.attempts + ")."
+                            : " - queued a deconstruct order for " + job.DescribeBuilding()
+                            + " at " + job.DescribeCell() + " (attempt " + job.attempts + ")."));
+                }
                 return;
             }
             job.attempts++;

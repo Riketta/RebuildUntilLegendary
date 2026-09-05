@@ -19,9 +19,11 @@ Requires [Harmony](https://steamcommunity.com/sharedfiles/filedetails/?id=200946
    colonists with portraits and their construction level, like the gene extractor's pawn
    selection.
 4. That's it. The loop:
-   - the finished building is below the target quality -> it is deconstructed (normal
-     vanilla deconstruction, with the usual material refund) and a fresh blueprint is
-     placed on the same spot with the same material, style, rotation and storage settings;
+   - the finished building is below the target quality -> it gets a normal vanilla
+     deconstruct order that a colonist performs (full material refund; the mod option
+     can also remove it instantly without a pawn), and once it is gone a fresh
+     blueprint is placed on the same spot with the same material, style, rotation and
+     storage settings;
    - the finished building is at or above the target quality -> the loop stops and the
      toggle unchecks itself with a success message.
 
@@ -97,6 +99,9 @@ manual deconstruct instead. The toggle and the stop button always end the loop.
 
 In the mod options:
 
+- **Pawn deconstruction** (on by default) - a below-target building is queued as a
+  normal deconstruct order that a colonist performs, like any manual deconstruction.
+  When off, the mod removes below-target buildings instantly.
 - **Manual deconstruct keeps rebuilding** (on by default) - deconstructing the
   tracked building yourself does not stop the loop; a fresh blueprint is placed on
   the same spot as another attempt.
@@ -115,6 +120,9 @@ In developer mode, additionally:
 ## Known limitations
 
 - Each attempt costs materials like a normal deconstruct-rebuild cycle would.
+- With **Pawn deconstruction** on (default), the loop waits while a colonist tears the
+  building down - if nobody can do the job, vanilla rules apply and the loop simply
+  waits. Canceling the queued deconstruct order just makes the mod queue it again.
 - Ideology-specific styles are carried over, but a rebuilt storage building leaves its
   storage group and rejoins with the same filter settings applied.
 - Switching the toggle off stops the loop immediately; a blueprint that was already
