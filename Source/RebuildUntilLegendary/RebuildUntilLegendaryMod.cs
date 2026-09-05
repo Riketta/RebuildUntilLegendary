@@ -7,6 +7,8 @@ namespace RebuildUntilLegendary
 {
     public class RebuildUntilLegendarySettings : ModSettings
     {
+        public bool manualDeconstructContinues = true;
+
         public bool anyoneHauls = true;
 
         public bool debugLogging = false;
@@ -16,6 +18,7 @@ namespace RebuildUntilLegendary
         public override void ExposeData()
         {
             base.ExposeData();
+            Scribe_Values.Look(ref manualDeconstructContinues, "manualDeconstructContinues", true);
             Scribe_Values.Look(ref anyoneHauls, "anyoneHauls", true);
             Scribe_Values.Look(ref debugLogging, "debugLogging", false);
             Scribe_Values.Look(ref verboseLogging, "verboseLogging", false);
@@ -76,6 +79,9 @@ namespace RebuildUntilLegendary
         {
             Listing_Standard list = new Listing_Standard();
             list.Begin(inRect);
+            list.CheckboxLabeled("RebuildUntilLegendary.ManualDeconstruct".Translate(),
+                ref Settings.manualDeconstructContinues, "RebuildUntilLegendary.ManualDeconstructTip".Translate());
+            list.Gap(12f);
             list.CheckboxLabeled("RebuildUntilLegendary.AnyoneHauls".Translate(),
                 ref Settings.anyoneHauls, "RebuildUntilLegendary.AnyoneHaulsTip".Translate());
             list.Gap(12f);

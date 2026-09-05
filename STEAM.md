@@ -14,6 +14,7 @@ Keep rebuilding a building until it reaches the quality you want - and stop by i
 [*]Pick the target quality (e.g. "Until Legendary or better") and who may build it: anyone (default) or one specific pawn, chosen from a picker with portraits and construction levels.
 [*]Every finished result below the target quality is deconstructed the normal vanilla way (usual material refund) and a fresh blueprint is placed on the same spot with the same material, style, rotation and storage settings.
 [*]As soon as the target quality (or better) is rolled, the toggle switches itself off with a success message.
+[*]Deconstructing the building by hand counts as another attempt: a fresh blueprint appears on the same spot (a mod option can stop the loop on manual deconstructs instead).
 [*]The in-progress blueprint or frame gets a "Stop rebuilding" button showing the target quality, builder and attempt count, and a running rebuild survives saving and loading.[/list]
 
 [b]Single-builder training[/b]
@@ -31,7 +32,7 @@ Keep rebuilding a building until it reaches the quality you want - and stop by i
 
 [h3]Things to keep in mind[/h3]
 [list][*]Each attempt costs materials exactly like a manual deconstruct-rebuild cycle would.
-[*]The mod never fights the player: canceling the blueprint, deconstructing or replacing the building yourself, or moving it away stops the loop cleanly with a message.
+[*]The mod never fights the player: canceling the blueprint, replacing the building yourself, or moving it away stops the loop cleanly with a message. Deconstructing by hand is treated as another attempt by default (a mod option stops the loop instead), and the toggle or the stop button always ends it.
 [*]A rebuilt storage building keeps its filter settings but leaves its storage group.
 [*]Switching the toggle off stops the loop immediately; a blueprint already placed stays on the map as a normal blueprint.
 [*]With helper hauling disabled, only the chosen pawn delivers materials too, which can make each attempt slow on big builds.

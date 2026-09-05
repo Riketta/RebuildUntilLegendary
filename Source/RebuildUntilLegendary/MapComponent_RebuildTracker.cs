@@ -207,8 +207,24 @@ namespace RebuildUntilLegendary
                         + " deconstructed for another attempt - will place a new blueprint.");
                     return;
                 case DestroyMode.Deconstruct:
-                    // A player or another mod deconstructed the tracked building;
-                    // respect that and stop instead of re-placing a blueprint.
+                    // A player or another mod deconstructed the tracked building. By
+                    // default that is just another way to roll again: count the
+                    // attempt and place a fresh blueprint. The mod option restores
+                    // the strict "stop the loop" behavior instead.
+                    if (RebuildUntilLegendaryMod.Settings?.manualDeconstructContinues ?? true)
+                    {
+                        job.attempts++;
+                        job.pendingPlacement = true;
+                        job.retryAtTick = 0;
+                        if (t is Building_Storage storage3)
+                        {
+                            job.CaptureStorageSettings(storage3.GetStoreSettings());
+                        }
+                        DebugLog.Log(job.DescribeBuilding() + " at " + job.DescribeCell()
+                            + " was deconstructed manually (attempt " + job.attempts
+                            + ") - will place a new blueprint.");
+                        return;
+                    }
                     Unregister(job, "the building was deconstructed");
                     Messages.Message("RebuildUntilLegendary.StoppedDeconstructed".Translate(job.DescribeBuilding()),
                         MessageTypeDefOf.NeutralEvent);

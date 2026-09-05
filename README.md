@@ -79,21 +79,23 @@ backstory), vanilla rules apply and the loop simply waits.
 
 ## Safety valves
 
-The mod never fights the player. It stops by itself (with a message) when:
+The mod never fights the player. Canceling the blueprint or frame, replacing the
+building with a new blueprint (upgrades and Replace Stuff-style material swaps),
+moving it away, or the spot being taken over by something else all end the loop by
+themselves, each with a message.
 
-- the blueprint or frame is canceled;
-- the building is deconstructed by the player (only the mod's own below-target
-  re-rolls keep the loop going);
-- the building is replaced with a new blueprint - upgrades and Replace Stuff-style
-  material swaps end the loop instead of claiming the replacement;
-- the spot is taken over by a different building;
-- the building is minified or otherwise moved away;
-- the building disappears without a trace.
+Deconstructing the tracked building by hand is treated as just another attempt by
+default: the loop places a fresh blueprint on the same spot. The mod option
+(**Manual deconstruct keeps rebuilding**) can be turned off to stop the loop on a
+manual deconstruct instead. The toggle and the stop button always end the loop.
 
 ## Settings
 
 In the mod options:
 
+- **Manual deconstruct keeps rebuilding** (on by default) - deconstructing the
+  tracked building yourself does not stop the loop; a fresh blueprint is placed on
+  the same spot as another attempt.
 - **Helpers haul materials** (on by default) - when a specific builder is chosen,
   other colonists may still deliver materials to the restricted blueprint, filling it
   faster. The chosen builder always does all the actual construction and rolls every
@@ -118,6 +120,9 @@ In developer mode, additionally:
   too, which can make each attempt slow on big builds.
 - With training mode on, the target quality is never reached (no frame is finished),
   so the loop runs almost for free until the toggle is switched off.
+- With **Manual deconstruct keeps rebuilding** on, deconstructing the building to
+  relocate it also triggers a fresh blueprint on the spot - switch the toggle off
+  first if you are done with the rebuild.
 
 ## For developers
 

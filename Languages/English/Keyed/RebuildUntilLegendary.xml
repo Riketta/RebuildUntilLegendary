@@ -3,6 +3,9 @@
 
   <RebuildUntilLegendary.SettingsCategory>Rebuild Until LEGENDARY</RebuildUntilLegendary.SettingsCategory>
 
+  <RebuildUntilLegendary.ManualDeconstruct>Manual deconstruct keeps rebuilding</RebuildUntilLegendary.ManualDeconstruct>
+  <RebuildUntilLegendary.ManualDeconstructTip>When you deconstruct the tracked building yourself with the vanilla deconstruct order, the loop treats it as another attempt and places a fresh blueprint on the same spot. Turn this off to stop the loop instead when you deconstruct by hand (the toggle and the stop button always stop it).</RebuildUntilLegendary.ManualDeconstructTip>
+
   <RebuildUntilLegendary.AnyoneHauls>Helpers haul materials</RebuildUntilLegendary.AnyoneHauls>
   <RebuildUntilLegendary.AnyoneHaulsTip>When a specific builder is chosen, other colonists may still deliver materials to the restricted blueprint, filling it faster. The chosen builder always does all the actual construction work and rolls every quality.</RebuildUntilLegendary.AnyoneHaulsTip>
 
