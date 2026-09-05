@@ -49,9 +49,11 @@ namespace RebuildUntilLegendary
 
         public StorageSettings storageSettings;
 
-        /// <summary>Set right before the mod itself destroys a below-target building,
-        /// so the destroy handler can tell its own deconstruction from a player's.
-        /// Consumed synchronously by the Thing.Destroy prefix, never persisted.</summary>
+        /// <summary>Set while a below-target building is being torn down by the
+        /// mod, so the destroy handler can tell its own deconstruction from a
+        /// player's. Consumed synchronously by the Thing.Destroy prefix in instant
+        /// mode; with pawn deconstruction it stays set while the queued order is
+        /// outstanding, so it is persisted to survive a save/load in between.</summary>
         public bool modInitiatedDeconstruct;
 
         /// <summary>Same as modInitiatedDeconstruct, but for the training-mode frame
@@ -78,6 +80,7 @@ namespace RebuildUntilLegendary
             Scribe_References.Look(ref builder, "builder");
             Scribe_Values.Look(ref trainingMode, "trainingMode", false);
             Scribe_Values.Look(ref attempts, "attempts", 0);
+            Scribe_Values.Look(ref modInitiatedDeconstruct, "modInitiatedDeconstruct", false);
             Scribe_Values.Look(ref pendingPlacement, "pendingPlacement", false);
             Scribe_Values.Look(ref retryAtTick, "retryAtTick", 0);
             Scribe_Values.Look(ref occupantIdNumber, "occupantIdNumber", -1);

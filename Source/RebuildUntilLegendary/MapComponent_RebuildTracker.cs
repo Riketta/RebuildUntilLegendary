@@ -461,7 +461,13 @@ namespace RebuildUntilLegendary
                 }
                 return;
             }
-            job.attempts++;
+            // Skip the count when an order was already queued under pawn
+            // deconstruction and the setting was switched off meanwhile - the
+            // attempt for this building instance was counted at queue time.
+            if (!job.modInitiatedDeconstruct)
+            {
+                job.attempts++;
+            }
             DebugLog.Log("quality " + quality + " below " + job.targetQuality + " - deconstructing "
                 + job.DescribeBuilding() + " at " + job.DescribeCell() + " (attempt " + job.attempts + ").");
             job.modInitiatedDeconstruct = true;
