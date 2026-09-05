@@ -28,7 +28,7 @@ Keep rebuilding a building until it reaches the quality you want - and stop by i
 [*]No building is completed in this mode, so the loop runs until you switch it off - perfect for leveling a rookie on cheap furniture.[/list]
 
 [h3]Settings[/h3]
-"Helpers haul materials" (on by default) lets other colonists deliver materials to a restricted blueprint while the chosen builder does all the construction and rolls every quality. Developer mode additionally offers debug logging (every step of every rebuild loop) and verbose logging (denied attempts and retries, throttled).
+"Manual deconstruct keeps rebuilding" (on by default) makes your own deconstruct order count as another attempt - a fresh blueprint appears on the same spot instead of ending the loop. "Helpers haul materials" (on by default) lets other colonists deliver materials to a restricted blueprint while the chosen builder does all the construction and rolls every quality. Developer mode additionally offers debug logging (every step of every rebuild loop) and verbose logging (denied attempts and retries, throttled).
 
 [h3]Things to keep in mind[/h3]
 [list][*]Each attempt costs materials exactly like a manual deconstruct-rebuild cycle would.
