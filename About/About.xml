@@ -20,7 +20,7 @@ Doubles as a training tool: every rebuild attempt is a full construction job, so
     <li>
       <packageId>brrainz.harmony</packageId>
       <displayName>Harmony</displayName>
-      <steamWorkshopURL>https://steamcommunity.com/sharedfiles/filedetails/?id=2009463077</steamWorkshopURL>
+      <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=2009463077</steamWorkshopUrl>
     </li>
   </modDependencies>
   <loadAfter>
